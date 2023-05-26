@@ -9,4 +9,10 @@ public class ProductsWithTypesAndBrandsSpecification : BaseSpecification<Product
         AddInclude(p => p.ProductType);
         AddInclude(p => p.ProductBrand);
     }
+
+    public ProductsWithTypesAndBrandsSpecification(int id) : base(x => x.Id == id)
+    {
+        AddInclude(p => p.ProductType);
+        AddInclude(p => p.ProductBrand);
+    }
 }
