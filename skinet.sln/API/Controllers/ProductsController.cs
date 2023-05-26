@@ -16,7 +16,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Product>>> GetProductsAsync()
+    public async Task<ActionResult<IReadOnlyList<Product>>> GetProductsAsync()
     {
         return Ok(await _productRepository.GetProductsAsync());
     }
@@ -26,5 +26,17 @@ public class ProductsController : ControllerBase
     {
         var product = await _productRepository.GetProductByIdAsync(id);
         return product != null ? Ok(product) : NotFound(); 
+    }
+
+    [HttpGet("brands")]
+    public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrandsAsync()
+    {
+        return Ok(await _productRepository.GetBrandsAsync());
+    }
+
+    [HttpGet("types")]
+    public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypesAsync()
+    {
+        return Ok(await _productRepository.GetTypesAsync());
     }
 }
