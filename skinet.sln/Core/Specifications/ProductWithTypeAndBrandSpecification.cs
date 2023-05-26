@@ -2,15 +2,15 @@
 
 namespace Core.Specifications;
 
-public class ProductsWithTypesAndBrandsSpecification : BaseSpecification<Product>
+public class ProductWithTypeAndBrandSpecification : BaseSpecification<Product>
 {
-    public ProductsWithTypesAndBrandsSpecification()
+    public ProductWithTypeAndBrandSpecification()
     {
         AddInclude(p => p.ProductType);
         AddInclude(p => p.ProductBrand);
     }
 
-    public ProductsWithTypesAndBrandsSpecification(int id) : base(x => x.Id == id)
+    public ProductWithTypeAndBrandSpecification(int id) : base(x => x.Id == id)
     {
         AddInclude(p => p.ProductType);
         AddInclude(p => p.ProductBrand);

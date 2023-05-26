@@ -26,14 +26,14 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<Product>>> GetProductsAsync()
     {
-        var spec = new ProductsWithTypesAndBrandsSpecification();
+        var spec = new ProductWithTypeAndBrandSpecification();
         return Ok(await _productRepository.ListAsync(spec));
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Product>> GetProductByIdAsync(int id)
     {
-        var spec = new ProductsWithTypesAndBrandsSpecification(id);
+        var spec = new ProductWithTypeAndBrandSpecification(id);
         var product = await _productRepository.GetEntityWithSpec(spec);
         return product != null ? Ok(product) : NotFound();
     }
