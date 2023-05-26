@@ -1,4 +1,4 @@
-using API.Services;
+using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -15,16 +15,14 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         // Adding Database support
+        services.AddScoped<IProductRepository, ProductRepository>();
         services.AddDbContext<StoreContext>(x =>
         {
             x.UseSqlite(
-                _configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly("Infrastructure")
+                _configuration.GetConnectionString("DefaultConnection")
+                //b => b.MigrationsAssembly("Infrastructure")
             );
         });
-
-        // Adding Services support
-        services.AddScoped<IProductService, ProductService>();
 
         // Adding CORS support
         services.AddControllers();
