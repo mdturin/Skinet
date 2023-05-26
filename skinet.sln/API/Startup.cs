@@ -1,17 +1,35 @@
+using API.Services;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 namespace API;
 
 public class Startup
 {
-    public IConfiguration Configuration { get; }
+    private readonly IConfiguration _configuration;
 
-    public Startup(IConfiguration configuration) => Configuration = configuration;
+    public Startup(IConfiguration configuration) => _configuration = configuration;
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+        // Adding Database support
+        services.AddDbContext<StoreContext>(x =>
+        {
+            x.UseSqlite(
+                _configuration.GetConnectionString("DefaultConnection"),
+                b => b.MigrationsAssembly("Infrastructure")
+            );
+        });
+
+        // Adding Services support
+        services.AddScoped<IProductService, ProductService>();
+
+        // Adding CORS support
         services.AddControllers();
+
+        // Adding Swagger support
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv6", Version = "v1" });
