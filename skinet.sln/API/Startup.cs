@@ -16,6 +16,7 @@ public class Startup
     {
         // Adding Database support
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped(typeof(IBulkRepository<>), typeof(BulkRepository<>));
         services.AddDbContext<StoreContext>(x =>
         {
             x.UseSqlite(
