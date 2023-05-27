@@ -1,4 +1,6 @@
-﻿using Core.Entities;
+﻿using API.DTOs;
+using AutoMapper;
+using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
@@ -12,30 +14,44 @@ public class ProductsController : ControllerBase
     private readonly IBulkRepository<Product> _productRepository;
     private readonly IBulkRepository<ProductBrand> _productBrandRepository;
     private readonly IBulkRepository<ProductType> _productTypeRepository;
+    private readonly IMapper _mapper;
 
     public ProductsController(
         IBulkRepository<Product> productRepository,
         IBulkRepository<ProductBrand> productBrandRepository,
-        IBulkRepository<ProductType> productTypeRepository)
+        IBulkRepository<ProductType> productTypeRepository,
+        IMapper mapper
+        )
     {
         _productRepository = productRepository;
         _productBrandRepository = productBrandRepository;
         _productTypeRepository = productTypeRepository;
+        _mapper = mapper;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<Product>>> GetProductsAsync()
+    public async Task<ActionResult<IReadOnlyList<ProductToReturnDTO>>> GetProductsAsync()
     {
         var spec = new ProductWithTypeAndBrandSpecification();
-        return Ok(await _productRepository.ListAsync(spec));
+        var products = await _productRepository.ListAsync(spec);
+        var productsDto = _mapper.Map<
+            IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDTO>>(products);
+        return Ok(productsDto);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> GetProductByIdAsync(int id)
+    public async Task<ActionResult<ProductToReturnDTO>> GetProductByIdAsync(int id)
     {
         var spec = new ProductWithTypeAndBrandSpecification(id);
+
         var product = await _productRepository.GetEntityWithSpec(spec);
-        return product != null ? Ok(product) : NotFound();
+        if (product != null)
+        {
+            var productDto = _mapper.Map<Product, ProductToReturnDTO>(product);
+            return Ok(productDto);
+        }
+
+        return NotFound($"Product with Id: {id} not found!");
     }
 
     [HttpGet("brands")]

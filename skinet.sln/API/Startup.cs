@@ -1,3 +1,4 @@
+using API.Helpers;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ public class Startup
         // Adding Database support
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped(typeof(IBulkRepository<>), typeof(BulkRepository<>));
+        services.AddAutoMapper(typeof(MappingProfiles));
         services.AddDbContext<StoreContext>(x =>
         {
             x.UseSqlite(
@@ -48,6 +50,8 @@ public class Startup
         app.UseHttpsRedirection();
 
         app.UseRouting();
+
+        app.UseStaticFiles();
 
         app.UseAuthorization();
 
