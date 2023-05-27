@@ -1,4 +1,5 @@
 ﻿using API.DTOs;
+using API.Errors;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
@@ -38,6 +39,8 @@ public class ProductsController : BaseController
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProductToReturnDTO>> GetProductByIdAsync(int id)
     {
         var spec = new ProductWithTypeAndBrandSpecification(id);
@@ -49,7 +52,8 @@ public class ProductsController : BaseController
             return Ok(productDto);
         }
 
-        return NotFound($"Product with Id: {id} not found!");
+        ApiResponse apiResponse = new(404, $"Product with Id: {id} not found!");
+        return base.NotFound(apiResponse);
     }
 
     [HttpGet("brands")]

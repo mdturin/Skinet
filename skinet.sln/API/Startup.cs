@@ -1,9 +1,8 @@
+using API.Extensions;
 using API.Helpers;
 using API.MiddleWare;
-using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 
 namespace API;
 
@@ -16,26 +15,12 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        // Adding Database support
-        services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped(typeof(IBulkRepository<>), typeof(BulkRepository<>));
         services.AddAutoMapper(typeof(MappingProfiles));
-        services.AddDbContext<StoreContext>(x =>
-        {
-            x.UseSqlite(
-                _configuration.GetConnectionString("DefaultConnection")
-                //b => b.MigrationsAssembly("Infrastructure")
-            );
-        });
-
-        // Adding CORS support
         services.AddControllers();
-
-        // Adding Swagger support
-        services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv6", Version = "v1" });
-        });
+        services.AddDbContext<StoreContext>(x =>
+            x.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
+        services.AddApplicationServices();
+        services.AddSwaggerDocumentation();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,10 +28,9 @@ public class Startup
     {
         app.UseMiddleware<ExceptionMiddleware>();
 
-        if (env.IsDevelopment())
+        if(env.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+            app.UseSwaggerDocumentation();
         }
 
         app.UseStatusCodePagesWithReExecute("/errors/{0}");
