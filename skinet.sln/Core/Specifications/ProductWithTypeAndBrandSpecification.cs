@@ -1,26 +1,27 @@
 ﻿using Core.Entities;
+using Core.Params;
+using Core.Services;
 
 namespace Core.Specifications;
 
 public class ProductWithTypeAndBrandSpecification : BaseSpecification<Product>
 {
-    public ProductWithTypeAndBrandSpecification(string sort)
+    public ProductWithTypeAndBrandSpecification(ProductSpecParams productParams)
+        : base(SpecificationService.BuildSpecification(productParams))
     {
         AddInclude(p => p.ProductType);
         AddInclude(p => p.ProductBrand);
         AddOrderBy(x => x.Name);
+        ApplyPaging(productParams.PageSize * (productParams.PageIndex - 1), productParams.PageSize);
 
-        if(!string.IsNullOrEmpty(sort))
+        switch(productParams.Sort)
         {
-            switch (sort)
-            {
-                case "priceAsc":
-                    AddOrderBy(p => p.Price);
-                    break;
-                case "priceDesc":
-                    AddOrderByDescending(p => p.Price);
-                    break;
-            }
+            case "priceAsc":
+                AddOrderBy(p => p.Price);
+                break;
+            case "priceDesc":
+                AddOrderByDescending(p => p.Price);
+                break;
         }
     }
 
