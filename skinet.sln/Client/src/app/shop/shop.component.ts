@@ -1,16 +1,19 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IProduct } from '../shared/models/product';
 import { ShopService } from './shop.service';
 import { IProductBrand } from '../shared/models/product-brand';
 import { IProductType } from '../shared/models/product-type';
 import { ShopParams } from '../shared/models/shop-params';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-shop',
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.scss'],
 })
-export class ShopComponent implements OnInit {
+export class ShopComponent implements OnInit, OnDestroy {
+
+  notifier = new Subject<void>();
 
   @ViewChild('searchBox', {static: false}) searchBox: ElementRef;
 
@@ -29,6 +32,11 @@ export class ShopComponent implements OnInit {
 
   constructor(private shopService: ShopService) {}
 
+  ngOnDestroy(): void {
+    this.notifier.next();
+    this.notifier.complete();
+  }
+
   ngOnInit() {
     this.getProducts();
     this.getBrands();
@@ -36,20 +44,23 @@ export class ShopComponent implements OnInit {
   }
 
   getProducts() {
-    this.shopService.getProducts(this.shopParams).subscribe({
-      next: (response) => {
+    this.shopService.getProducts(this.shopParams)
+    .pipe(takeUntil(this.notifier))
+    .subscribe({
+      next: (response : any) => {
         this.products = response.data;
         this.totalCount = response.count;
         this.shopParams.pageSize = response.pageSize;
         this.shopParams.pageNumber = response.pageIndex;
       },
-      error: (error) => console.error(error),
-      complete: () => console.info('completed get products from server.'),
+      error: (error) => console.error(error)
     });
   }
 
   getBrands() {
-    this.shopService.getBrands().subscribe({
+    this.shopService.getBrands()
+    .pipe(takeUntil(this.notifier))
+    .subscribe({
       next: (response) => this.brands = [{id: 0, name: 'All'}, ...response],
       error: (error) => console.error(error),
       complete: () => console.info('completed get brands from server.'),
@@ -57,7 +68,9 @@ export class ShopComponent implements OnInit {
   }
 
   getTypes() {
-    this.shopService.getTypes().subscribe({
+    this.shopService.getTypes()
+    .pipe(takeUntil(this.notifier))
+    .subscribe({
       next: (response) => this.types = [{id: 0, name: 'All'}, ...response],
       error: (error) => console.error(error),
       complete: () => console.info('completed get types from server.'),
