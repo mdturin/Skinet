@@ -28,7 +28,7 @@ public class Startup
         });
 
         services.AddApplicationServices();
-        services.AddIdentityServices();
+        services.AddIdentityServices(_configuration);
         services.AddSwaggerDocumentation();
         services.AddCors(option =>
         {
@@ -61,6 +61,8 @@ public class Startup
         app.UseStaticFiles();
 
         app.UseCors("CorsPolicy");
+
+        app.UseAuthentication();
 
         app.UseAuthorization();
 
