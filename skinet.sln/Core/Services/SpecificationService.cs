@@ -9,7 +9,6 @@ public class SpecificationService
     public static Expression<Func<Product, bool>> BuildSpecification(ProductSpecParams productParams)
     {
         var parameterExpr = Expression.Parameter(typeof(Product), "p");
-
         var namePropertyExpr = Expression.Property(parameterExpr, "Name");
         var searchExpr = Expression.Constant(productParams.Search);
 
@@ -30,7 +29,6 @@ public class SpecificationService
                 Expression.Property(parameterExpr, "ProductBrandId"),
                 Expression.Constant(productParams.BrandId.Value)
             );
-
 
         // Filter by type ID if provided
         var filterByTypeId = !productParams.TypeId.HasValue

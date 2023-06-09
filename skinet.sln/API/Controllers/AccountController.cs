@@ -7,21 +7,20 @@ using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API.Controllers;
 public class AccountController : BaseController
 {
     #region private members
-    private readonly UserManager<AppUser> _userManager;
-    private readonly SignInManager<AppUser> _signInManager;
-    private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
+    private readonly ITokenService _tokenService;
+    private readonly SignInManager<AppUser> _signInManager;
+    private readonly UserManager<AppUser> _userManager;
     #endregion
 
     public AccountController(
-        UserManager<AppUser> userManager, 
-        SignInManager<AppUser> signInManager, 
+        UserManager<AppUser> userManager,
+        SignInManager<AppUser> signInManager,
         ITokenService tokenService,
         IMapper mapper)
     {
@@ -43,7 +42,7 @@ public class AccountController : BaseController
     [HttpGet("emailexists")]
     public async Task<ActionResult<bool>> CheckEmailExistsAsync([FromQuery] string email)
     {
-        return Ok(await _userManager.FindByEmailAsync(email) != null);
+        return await _userManager.FindByEmailAsync(email) != null;
     }
 
     [Authorize]
@@ -63,7 +62,7 @@ public class AccountController : BaseController
             .FindByEmailWithAddressAsync(HttpContext.User);
         user.Address = _mapper.Map<AddressDTO, Address>(address);
         var result = await _userManager.UpdateAsync(user);
-        if(result.Succeeded) 
+        if(result.Succeeded)
             return Ok(_mapper.Map<Address, AddressDTO>(user.Address));
         return BadRequest("Problem updating the user");
     }
@@ -86,6 +85,16 @@ public class AccountController : BaseController
     [HttpPost("register")]
     public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDto)
     {
+        if(CheckEmailExistsAsync(registerDto.Email).Result.Value)
+        {
+            ApiValidationErrorResponse validationErrorResponse = new()
+            {
+                Errors = new[] { "Email address is in use" }
+            };
+
+            return new BadRequestObjectResult(validationErrorResponse);
+        }
+
         var user = new AppUser
         {
             DisplayName = registerDto.DisplayName,

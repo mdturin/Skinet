@@ -18,5 +18,9 @@ public class MappingProfiles : Profile
             ;
 
         CreateMap<Address, AddressDTO>().ReverseMap();
+
+        CreateMap<CustomerBasketDTO, CustomerBasket>().ReverseMap();
+
+        CreateMap<BasketItemDTO, BasketItem>().ReverseMap();
     }
 }
