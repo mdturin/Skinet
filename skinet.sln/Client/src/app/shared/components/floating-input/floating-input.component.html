@@ -15,6 +15,14 @@
     class="form-control"
     placeholder="{{ label }}"
   />
+  <div
+    *ngIf="
+      controlDir &&
+      controlDir.control &&
+      controlDir.control.status === 'PENDING'
+    "
+    class="spinner-border spinner-border-sm text-primary loader"
+  ></div>
   <label for="{{ label }}">{{ label }}</label>
   <div
     class="invalid-feedback"
@@ -29,5 +37,14 @@
       >{{ label }} is required</span
     >
     <span *ngIf="controlDir.control.errors?.pattern">Invalid {{ label }}</span>
+  </div>
+
+  <div
+    class="invalid-feedback d-block"
+    *ngIf="controlDir && controlDir.control && controlDir.control.dirty"
+  >
+    <span *ngIf="controlDir.control.errors?.emailExists"
+      >Email is already exist</span
+    >
   </div>
 </div>

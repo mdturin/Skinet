@@ -1,1 +1,48 @@
-<p>register works!</p>
+<div class="d-flex justify-content-center mt-5">
+  <div class="col-3">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Login Header -->
+      <div class="text-center mb-4">
+        <h1 class="mb-3">Register</h1>
+      </div>
+
+      <!-- Display Name Input -->
+      <app-floating-input
+        formControlName="displayName"
+        label="Display Name"
+      ></app-floating-input>
+
+      <!-- Email Input -->
+      <app-floating-input
+        formControlName="email"
+        label="Email"
+        type="email"
+      ></app-floating-input>
+
+      <!-- Password Input -->
+      <app-floating-input
+        formControlName="password"
+        label="Password"
+        type="password"
+      ></app-floating-input>
+
+      <!-- Errors -->
+      <ul class="text-danger list-unstyled" *ngIf="errors">
+        <li *ngFor="let error of errors">
+          {{ error }}
+        </li>
+      </ul>
+
+      <!-- Login Button -->
+      <div class="d-grid">
+        <button
+          [disabled]="registerForm.invalid"
+          class="btn btn-lg btn-primary mt-3"
+          type="submit"
+        >
+          Register
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

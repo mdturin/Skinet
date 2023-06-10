@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, ReplaySubject, map, of } from 'rxjs';
 import { IUser } from '../shared/models/user';
 import { Router } from '@angular/router';
 
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class AccountService implements OnInit {
   baseUrl = 'https://localhost:5001/api/';
 
-  private currentUserSource = new BehaviorSubject<IUser>(null);
+  private currentUserSource = new ReplaySubject<IUser>(1);
   currentUser$ = this.currentUserSource.asObservable();
 
   constructor(private http: HttpClient, private router: Router) { }
@@ -18,14 +18,10 @@ export class AccountService implements OnInit {
   ngOnInit(): void {
   }
 
-  getCurrentUserValue() {
-    return this.currentUserSource.value;
-  }
-
   loadCurrentUser(token: string) {
     if (token === null) {
       this.currentUserSource.next(null);
-      return;
+      return of(null);
     }
     const headers = { 'Authorization': 'Bearer ' + token };
     const endPoint = this.baseUrl + 'account';

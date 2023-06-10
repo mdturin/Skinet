@@ -1,9 +1,7 @@
 <div class="container mt-3">
   <div class="row">
     <section class="col-3">
-      <ng-container
-      *ngIf="types && brands"
-      >
+      <ng-container *ngIf="types && brands">
         <h5 class="text-warning ml-3 my-3">Sort</h5>
         <select
           class="custom-select mb-3"
@@ -52,23 +50,31 @@
           [pageSize]="shopParams.pageSize"
         >
         </app-paging-header>
-        <div class="form-inline"
-          *ngIf="products && products.length > 0"
-        >
-          <input
-            #searchBox
-            (keyup.enter)="onSearch()"
-            class="form-control mr-2"
-            style="width: 300px"
-            placeholder="Search"
-            type="text"
-          />
-          <button class="btn btn-outline-primary my-2" (click)="onSearch()">
-            Search
-          </button>
-          <button class="btn btn-outline-success ml-2 my-2" (click)="onReset()">
-            Reset
-          </button>
+        <input
+          #searchBox
+          (keyup.enter)="onSearch()"
+          class="form-control"
+          style="width: 300px"
+          placeholder="Search"
+          type="text"
+        />
+        <div class="col-3">
+          <div class="d-flex justify-content-end align-items-center">
+            <button
+              class="btn btn-outline-primary my-2 mx-1"
+              style="width: 80px"
+              (click)="onSearch()"
+            >
+              Search
+            </button>
+            <button
+              class="btn btn-outline-success my-2 mx-1"
+              style="width: 80px"
+              (click)="onReset()"
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </div>
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
