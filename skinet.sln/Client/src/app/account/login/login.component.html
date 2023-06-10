@@ -1,0 +1,94 @@
+<div class="d-flex justify-content-center mt-5">
+  <div class="col-3">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      
+      <div class="text-center mb-4">
+        <h1 class="mb-3">Login</h1>
+      </div>
+
+      <div class="form-floating">
+        <input
+          type="email"
+          class="form-control"
+          id="floatingInput"
+          placeholder="Your Email"
+          formControlName="email"
+        />
+        <label for="floatingInput">Email address</label>
+        <div
+          *ngIf="
+            loginForm.get('email').invalid &&
+            (loginForm.get('email').dirty || loginForm.get('email').touched)
+          "
+          class="invalid-feedback"
+        >
+          <div
+            *ngIf="
+              loginForm.get('email').errors.required &&
+              (loginForm.get('email').dirty || loginForm.get('email').touched)
+            "
+          >
+            Email is required
+          </div>
+          <div
+            *ngIf="
+              loginForm.get('email').errors.email &&
+              (loginForm.get('email').dirty || loginForm.get('email').touched)
+            "
+          >
+            Email is invalid
+          </div>
+        </div>
+      </div>
+
+      <div class="form-floating mt-3">
+        <input
+          type="password"
+          class="form-control"
+          id="floatingPassword"
+          placeholder="Password"
+          formControlName="password"
+        />
+        <label for="floatingPassword">Password</label>
+        <div
+          *ngIf="
+            loginForm.get('password').invalid &&
+            (loginForm.get('password').dirty ||
+              loginForm.get('password').touched)
+          "
+          class="invalid-feedback"
+        >
+          <div
+            *ngIf="
+              loginForm.get('password').errors.required &&
+              (loginForm.get('password').dirty ||
+                loginForm.get('password').touched)
+            "
+          >
+            Password is required
+          </div>
+          <div
+            *ngIf="
+              loginForm.get('password').errors.minlength &&
+              (loginForm.get('password').dirty ||
+                loginForm.get('password').touched)
+            "
+          >
+            Password must be at least 6 characters
+          </div>
+        </div>
+      </div>
+
+      <div class="d-grid">
+        <button
+          [disabled]="loginForm.invalid"
+          class="btn btn-lg btn-primary mt-3"
+          type="submit"
+        >
+          Sign in
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

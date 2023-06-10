@@ -46,7 +46,7 @@ export class BasketService {
   private calculateTotals() {
     const basket = this.getCurrentBasketValue();
     const shipping = 0;
-    const subtotal = basket.items.reduce((a, b) => b.price * b.quantity + a, 0);
+    const subtotal = basket.basketItems.reduce((a, b) => b.price * b.quantity + a, 0);
     const total = shipping + subtotal;
     this.basketTotalSource.next({ shipping, total, subtotal });
   }
@@ -57,7 +57,7 @@ export class BasketService {
       quantity
     );
     const basket = this.getCurrentBasketValue() ?? this.createBasket();
-    basket.items = this.addOrUpdateItem(basket.items, itemToAdd, quantity);
+    basket.basketItems = this.addOrUpdateItem(basket.basketItems, itemToAdd, quantity);
     this.setBasket(basket);
   }
 
@@ -92,16 +92,16 @@ export class BasketService {
 
   incrementItemQuantity(item: IBasketItem) {
     const basket = this.getCurrentBasketValue();
-    const foundItemIndex = basket.items.findIndex(x => x.id === item.id);
-    basket.items[foundItemIndex].quantity++;
+    const foundItemIndex = basket.basketItems.findIndex(x => x.id === item.id);
+    basket.basketItems[foundItemIndex].quantity++;
     this.setBasket(basket);
   }
 
   decrementItemQuantity(item: IBasketItem) {
     const basket = this.getCurrentBasketValue();
-    const foundItemIndex = basket.items.findIndex(x => x.id === item.id);
-    if (basket.items[foundItemIndex].quantity > 1) {
-      basket.items[foundItemIndex].quantity--;
+    const foundItemIndex = basket.basketItems.findIndex(x => x.id === item.id);
+    if (basket.basketItems[foundItemIndex].quantity > 1) {
+      basket.basketItems[foundItemIndex].quantity--;
       this.setBasket(basket);
     } else {
       this.removeItemFromBasket(item);
@@ -110,9 +110,9 @@ export class BasketService {
 
   removeItemFromBasket(item: IBasketItem) {
     const basket = this.getCurrentBasketValue();
-    if (basket.items.some(x => x.id === item.id)) {
-      basket.items = basket.items.filter(x => x.id !== item.id);
-      if (basket.items.length > 0) {
+    if (basket.basketItems.some(x => x.id === item.id)) {
+      basket.basketItems = basket.basketItems.filter(x => x.id !== item.id);
+      if (basket.basketItems.length > 0) {
         this.setBasket(basket);
       } else {
         this.deleteBasket(basket);
