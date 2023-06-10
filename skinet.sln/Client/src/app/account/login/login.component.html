@@ -1,11 +1,12 @@
 <div class="d-flex justify-content-center mt-5">
   <div class="col-3">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      
+      <!-- Login Header -->
       <div class="text-center mb-4">
         <h1 class="mb-3">Login</h1>
       </div>
 
+      <!-- Email Input -->
       <div class="form-floating">
         <input
           type="email"
@@ -15,32 +16,29 @@
           formControlName="email"
         />
         <label for="floatingInput">Email address</label>
-        <div
+        <span
+          class="text-danger"
           *ngIf="
             loginForm.get('email').invalid &&
-            (loginForm.get('email').dirty || loginForm.get('email').touched)
+            loginForm.get('email').touched &&
+            loginForm.get('email').errors.required
           "
-          class="invalid-feedback"
         >
-          <div
-            *ngIf="
-              loginForm.get('email').errors.required &&
-              (loginForm.get('email').dirty || loginForm.get('email').touched)
-            "
-          >
-            Email is required
-          </div>
-          <div
-            *ngIf="
-              loginForm.get('email').errors.email &&
-              (loginForm.get('email').dirty || loginForm.get('email').touched)
-            "
-          >
-            Email is invalid
-          </div>
-        </div>
+          Email is required
+        </span>
+        <span
+          class="text-danger"
+          *ngIf="
+            loginForm.get('email').invalid &&
+            loginForm.get('email').touched &&
+            loginForm.get('email').errors.pattern
+          "
+        >
+          Email is invalid
+        </span>
       </div>
 
+      <!-- Password Input -->
       <div class="form-floating mt-3">
         <input
           type="password"
@@ -50,35 +48,19 @@
           formControlName="password"
         />
         <label for="floatingPassword">Password</label>
-        <div
+        <span
+          class="text-danger"
           *ngIf="
             loginForm.get('password').invalid &&
-            (loginForm.get('password').dirty ||
-              loginForm.get('password').touched)
+            loginForm.get('password').touched &&
+            loginForm.get('password').errors.required
           "
-          class="invalid-feedback"
         >
-          <div
-            *ngIf="
-              loginForm.get('password').errors.required &&
-              (loginForm.get('password').dirty ||
-                loginForm.get('password').touched)
-            "
-          >
-            Password is required
-          </div>
-          <div
-            *ngIf="
-              loginForm.get('password').errors.minlength &&
-              (loginForm.get('password').dirty ||
-                loginForm.get('password').touched)
-            "
-          >
-            Password must be at least 6 characters
-          </div>
-        </div>
+          Password is required
+        </span>
       </div>
 
+      <!-- Login Button -->
       <div class="d-grid">
         <button
           [disabled]="loginForm.invalid"
@@ -88,7 +70,14 @@
           Sign in
         </button>
       </div>
-
     </form>
+  </div>
+
+  <div class="col-4">
+    <p>Form Status {{ loginForm.status }}</p>
+    <p>Email Status {{ loginForm.get("email").status }}</p>
+    <p>Email Touched {{ loginForm.get("email").touched }}</p>
+    <p>Email Dirty {{ loginForm.get("email").dirty }}</p>
+    <pre>Form Value {{ loginForm.value | json }}</pre>
   </div>
 </div>
