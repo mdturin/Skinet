@@ -7,58 +7,18 @@
       </div>
 
       <!-- Email Input -->
-      <div class="form-floating">
-        <input
-          type="email"
-          class="form-control"
-          id="floatingInput"
-          placeholder="Your Email"
-          formControlName="email"
-        />
-        <label for="floatingInput">Email address</label>
-        <span
-          class="text-danger"
-          *ngIf="
-            loginForm.get('email').invalid &&
-            loginForm.get('email').touched &&
-            loginForm.get('email').errors.required
-          "
-        >
-          Email is required
-        </span>
-        <span
-          class="text-danger"
-          *ngIf="
-            loginForm.get('email').invalid &&
-            loginForm.get('email').touched &&
-            loginForm.get('email').errors.pattern
-          "
-        >
-          Email is invalid
-        </span>
-      </div>
+      <app-floating-input
+        formControlName="email"
+        label="Email"
+        type="email"
+      ></app-floating-input>
 
       <!-- Password Input -->
-      <div class="form-floating mt-3">
-        <input
-          type="password"
-          class="form-control"
-          id="floatingPassword"
-          placeholder="Password"
-          formControlName="password"
-        />
-        <label for="floatingPassword">Password</label>
-        <span
-          class="text-danger"
-          *ngIf="
-            loginForm.get('password').invalid &&
-            loginForm.get('password').touched &&
-            loginForm.get('password').errors.required
-          "
-        >
-          Password is required
-        </span>
-      </div>
+      <app-floating-input
+        formControlName="password"
+        label="Password"
+        type="password"
+      ></app-floating-input>
 
       <!-- Login Button -->
       <div class="d-grid">
@@ -71,13 +31,5 @@
         </button>
       </div>
     </form>
-  </div>
-
-  <div class="col-4">
-    <p>Form Status {{ loginForm.status }}</p>
-    <p>Email Status {{ loginForm.get("email").status }}</p>
-    <p>Email Touched {{ loginForm.get("email").touched }}</p>
-    <p>Email Dirty {{ loginForm.get("email").dirty }}</p>
-    <pre>Form Value {{ loginForm.value | json }}</pre>
   </div>
 </div>
