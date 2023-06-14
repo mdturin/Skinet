@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
@@ -39,6 +40,17 @@ public class StoreContextSeed
                 foreach (var product in products)
                 {
                     await context.Products.AddAsync(product);
+                }
+                await context.SaveChangesAsync();
+            }
+
+            if(!context.DeliveryMethods.Any())
+            {
+                var dmData = File.ReadAllText("../Infrastructure/Data/SeedData/delivery.json");
+                var methods = JsonSerializer.Deserialize<List<DeliveryMethod>>(dmData);
+                foreach(var method in methods)
+                {
+                    await context.DeliveryMethods.AddAsync(method);
                 }
                 await context.SaveChangesAsync();
             }

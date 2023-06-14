@@ -22,5 +22,7 @@ public class MappingProfiles : Profile
         CreateMap<CustomerBasketDTO, CustomerBasket>().ReverseMap();
 
         CreateMap<BasketItemDTO, BasketItem>().ReverseMap();
+
+        CreateMap<AddressDTO, Core.Entities.OrderAggregate.Address>();
     }
 }
