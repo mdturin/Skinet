@@ -1,62 +1,64 @@
 ﻿using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Interfaces;
+using Core.Specifications;
 
-namespace Infrastructure.Services
+namespace Infrastructure.Services;
+
+public class OrdersService : IOrderService
 {
-    public class OrdersService : IOrderService
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IBasketRepository _basketContext;
+
+    public OrdersService(IBasketRepository basketContext, IUnitOfWork unitOfWork)
     {
-        private readonly IBulkRepository<Order> _orderContext;
-        private readonly IBulkRepository<DeliveryMethod> _dmContext;
-        private readonly IBulkRepository<Product> _productContext;
-        private readonly IBasketRepository _basketContext;
+        _basketContext = basketContext;
+        _unitOfWork = unitOfWork;
+    }
 
-        public OrdersService(
-            IBulkRepository<Order> orderContext,
-            IBulkRepository<DeliveryMethod> dmContext,
-            IBulkRepository<Product> productContext,
-            IBasketRepository basketContext)
+    public async Task<Order> CreateOrderAsync(
+        string buyerEmail, int deliveryMethodId, string basketId, Address shippingAddress)
+    {
+        var basket = await _basketContext.GetBasketAsync(basketId);
+        var items = new List<OrderItem>();
+        foreach(var item in basket.BasketItems)
         {
-            _orderContext = orderContext;
-            _dmContext = dmContext;
-            _productContext = productContext;
-            _basketContext = basketContext;
+            var productItem = await _unitOfWork.Repository<Product>().GetByIdAsync(item.Id);
+            var itemOrdered = new ProductItemOrdered(productItem.Id, productItem.Name, productItem.PictureUrl);
+            var orderItem = new OrderItem(itemOrdered, productItem.Price, item.Quantity);
+            items.Add(orderItem);
         }
 
-        public async Task<Order> CreateOrderAsync(
-            string buyerEmail, int deliveryMethodId, string basketId, Address shippingAddress)
-        {
-            var basket = await _basketContext.GetBasketAsync(basketId);
-            var items = new List<OrderItem>();
-            foreach(var item in basket.BasketItems)
-            {
-                var productItem = await _productContext.GetByIdAsync(item.Id);
-                var itemOrdered = new ProductItemOrdered(productItem.Id, productItem.Name, productItem.PictureUrl);
-                var orderItem = new OrderItem(itemOrdered, productItem.Price, item.Quantity);
-                items.Add(orderItem);
-            }
+        var deliveryMethod = await _unitOfWork
+            .Repository<DeliveryMethod>().GetByIdAsync(deliveryMethodId);
+        var subTotal = items.Sum(item => item.Price * item.Quantity);
+        var order = new Order(items, buyerEmail, shippingAddress, deliveryMethod, subTotal);
 
-            var deliveryMethod = await _dmContext.GetByIdAsync(deliveryMethodId);
+        _unitOfWork.Repository<Order>().Add(order);
 
-            var subTotal = items.Sum(item => item.Price * item.Quantity);
+        var result = await _unitOfWork.Complete();
 
-            var order = new Order(items, buyerEmail, shippingAddress, deliveryMethod, subTotal);
-            return order;
-        }
+        if(result <= 0) return null;
 
-        public Task<IReadOnlyList<DeliveryMethod>> GetDeliveryMethodsAsync()
-        {
-            throw new NotImplementedException();
-        }
+        await _basketContext.DeleteBasketAsync(basketId);
 
-        public Task<Order> GetOrderByIdAsync(int id, string buyerEmail)
-        {
-            throw new NotImplementedException();
-        }
+        return order;
+    }
 
-        public Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail)
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<IReadOnlyList<DeliveryMethod>> GetDeliveryMethodsAsync()
+    {
+        return await _unitOfWork.Repository<DeliveryMethod>().ListAllAsync();
+    }
+
+    public Task<Order> GetOrderByIdAsync(int id, string buyerEmail)
+    {
+        var spec = new OrdersWithItemsAndOrderingSpecification(id, buyerEmail);
+        return _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
+    }
+
+    public Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail)
+    {
+        var spec = new OrdersWithItemsAndOrderingSpecification(buyerEmail);
+        return _unitOfWork.Repository<Order>().ListAsync(spec);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Reflection;
 
 namespace Infrastructure.Data;
@@ -29,12 +30,25 @@ public class StoreContext : DbContext
                     .GetProperties()
                     .Where(p => p.PropertyType == typeof(decimal));
 
+                var dataTimeProperties = entityType
+                    .ClrType
+                    .GetProperties()
+                    .Where(p => p.PropertyType == typeof(DateTimeOffset));
+
                 foreach(var property in properties)
                 {
                     modelBuilder
                         .Entity(entityType.Name)
                         .Property(property.Name)
                         .HasConversion<double>();
+                }
+
+                foreach(var property in dataTimeProperties)
+                {
+                    modelBuilder
+                        .Entity(entityType.Name)
+                        .Property(property.Name)
+                        .HasConversion(new DateTimeOffsetToBinaryConverter());
                 }
             }
         }

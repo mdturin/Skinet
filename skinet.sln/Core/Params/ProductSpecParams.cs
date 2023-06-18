@@ -12,15 +12,15 @@ public class ProductSpecParams
     public string Sort { get; set; }
 
     public int PageSize
-	{
-		get { return _pageSize; }
-		set { _pageSize = value > _maxPageSize ? _maxPageSize : value; }
-	}
+    {
+        get { return _pageSize; }
+        set { _pageSize = value > _maxPageSize ? _maxPageSize : value; }
+    }
 
-	public string Search
-	{
-		get { return _search; }
-		set { _search = value.ToLower(); }
-	}
+    public string Search
+    {
+        get { return _search; }
+        set { _search = value.ToLower(); }
+    }
 
 }

@@ -34,4 +34,29 @@ public class OrdersController : BaseController
 
         return Ok(order);
     }
+
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyCollection<OrderToReturnDTO>>> GetOrdersForUser()
+    {
+        var email = HttpContext.User.RetriveEmailFromPrincipal();
+        var orders = await _orderService.GetOrdersForUserAsync(email);
+        IReadOnlyCollection<OrderToReturnDTO> ordersDTO = 
+            _mapper.Map<IReadOnlyCollection<Order>, IReadOnlyCollection<OrderToReturnDTO>>(orders);
+        return base.Ok(ordersDTO);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<OrderToReturnDTO>> GetOrderByIdForUser(int id)
+    {
+        var email = HttpContext.User.RetriveEmailFromPrincipal();
+        var order = await _orderService.GetOrderByIdAsync(id, email);
+        if (order == null) return NotFound(new ApiResponse(404)); 
+        return Ok(_mapper.Map<Order, OrderToReturnDTO>(order));
+    }
+
+    [HttpGet("deliveryMethods")]
+    public async Task<ActionResult<IReadOnlyCollection<DeliveryMethod>>> GetDeliveryMethods()
+    {
+        return Ok(await _orderService.GetDeliveryMethodsAsync());
+    }
 }
