@@ -12,6 +12,7 @@ public static class ApplicationServicesExtension
     {
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IOrderService, OrdersService>();
+        services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IBasketRepository, BasketRepository>();
