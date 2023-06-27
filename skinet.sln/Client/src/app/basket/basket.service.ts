@@ -9,12 +9,13 @@ import {
 } from '../shared/models/basket';
 import { IProduct } from '../shared/models/product';
 import { IDeliveryMethod } from '../shared/models/delivery-method';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BasketService {
-  baseUrl = 'https://localhost:5001/api/';
+  baseUrl = environment.apiUrl;
 
   private basketSource = new BehaviorSubject<IBasket>(null);
   basket$ = this.basketSource.asObservable();
