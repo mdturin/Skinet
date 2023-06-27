@@ -37,7 +37,7 @@ public class OrdersService : IOrderService
         var subTotal = items.Sum(item => item.Price * item.Quantity);
 
         string paymentIntentId = basket.PaymentIntentId;
-        var spec = new OrderByPaymentIntentIdWithItemsSpecification(paymentIntentId);
+        var spec = new OrderByPaymentIntentIdSpecification(paymentIntentId);
         var existingOrder = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
 
         if (existingOrder != null)
