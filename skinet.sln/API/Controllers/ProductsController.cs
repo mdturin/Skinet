@@ -31,6 +31,7 @@ public class ProductsController : BaseController
     }
 
     [HttpGet]
+    [Cached(600)]
     public async Task<ActionResult<Pagination<ProductToReturnDTO>>> GetProductsAsync(
         [FromQuery] ProductSpecParams productParams)
     {
@@ -50,6 +51,7 @@ public class ProductsController : BaseController
         return Ok(value);
     }
 
+    [Cached(600)]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -68,12 +70,14 @@ public class ProductsController : BaseController
         return base.NotFound(apiResponse);
     }
 
+    [Cached(600)]
     [HttpGet("brands")]
     public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrandsAsync()
     {
         return Ok(await _productBrandRepository.ListAllAsync());
     }
 
+    [Cached(600)]
     [HttpGet("types")]
     public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypesAsync()
     {

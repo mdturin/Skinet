@@ -18,7 +18,8 @@ export class LoadingInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     const shouldBypassLoadingState =
       (request.method === 'POST' && request.url.includes('orders')) ||
-      request.url.includes('emailexists');
+      request.url.includes('emailexists') ||
+      request.method === 'DELETE';
 
     if (shouldBypassLoadingState) {
       return next.handle(request);

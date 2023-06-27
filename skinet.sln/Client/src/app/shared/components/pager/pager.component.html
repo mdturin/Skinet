@@ -8,4 +8,5 @@
   (pageChanged)="onPageChanged($event)"
   [itemsPerPage]="pageSize"
   [hidden]="totalCount <= pageSize"
+  [ngModel]="pageNumber"
 ></pagination>

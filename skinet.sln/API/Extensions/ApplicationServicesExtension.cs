@@ -10,6 +10,8 @@ public static class ApplicationServicesExtension
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        services.AddSingleton<IResponseCacheService, ResponseCacheService>();
+
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IOrderService, OrdersService>();
         services.AddScoped<IPaymentService, PaymentService>();
