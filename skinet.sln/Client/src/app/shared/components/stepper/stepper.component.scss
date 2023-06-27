@@ -2,6 +2,7 @@ button.nav-link{
     background: #e9ecef;
     border-radius: 0;
     border: none;
+    text-transform: uppercase;
 
     &:focus{
         outline: none;
@@ -17,5 +18,10 @@ button.nav-link{
 
     &.active:focus{
         outline: none;
+    }
+
+    &:disabled:not(.active){
+        background: #e9ecef;
+        color: #6c757d;
     }
 }

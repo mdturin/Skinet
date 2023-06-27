@@ -16,10 +16,16 @@ export class LoadingInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    if(!request.url.includes('emailexists')) 
-      this.busyService.busy();
+    const shouldBypassLoadingState =
+      (request.method === 'POST' && request.url.includes('orders')) ||
+      request.url.includes('emailexists');
+
+    if (shouldBypassLoadingState) {
+      return next.handle(request);
+    }
+
+    this.busyService.busy();
     return next.handle(request).pipe(
-      finalize(() => this.busyService.idle())
-    );
+      finalize(() => this.busyService.idle()));
   }
 }
